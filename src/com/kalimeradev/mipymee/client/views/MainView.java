@@ -1,4 +1,4 @@
-package com.kalimeradev.mipymee.client.view;
+package com.kalimeradev.mipymee.client.views;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -17,15 +17,16 @@ public class MainView extends DockPanel {
 		////
 		ProfileView profileView = new ProfileView();
 		LeftPanelView leftPanelView = new LeftPanelView(Unit.EM); 
+		TopMenuView topMenuView= new TopMenuView(); 
 		////
-		add(new HTML("north"), DockPanel.NORTH);//0
-		add(new HTML("south"), DockPanel.SOUTH);//1
-		add(new HTML("east"), DockPanel.EAST);//2
-		add(leftPanelView, DockPanel.WEST);//3
+		add(topMenuView, DockPanel.NORTH);
+		add(new HTML("south"), DockPanel.SOUTH);
+		add(new HTML("east"), DockPanel.EAST);
+		add(leftPanelView, DockPanel.WEST);
 
-		// Add scrollable text in the center
 		add(profileView, DockPanel.CENTER);
 
+		setCellWidth(leftPanelView, "210px");
 		// Return the content
 		ensureDebugId("cwDockPanel");
 	}

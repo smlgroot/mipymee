@@ -1,14 +1,8 @@
 package com.kalimeradev.mipymee.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.kalimeradev.mipymee.client.view.LeftPanelView;
-import com.kalimeradev.mipymee.client.view.MainView;
-import com.kalimeradev.mipymee.client.view.ProfileView;
+import com.kalimeradev.mipymee.client.views.MainView;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -22,30 +16,13 @@ public class Mipymee implements EntryPoint {
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting service.
 	 */
-	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		System.out.println("****************");
-		greetingService.retrieveCurrentUser(new AsyncCallback<LoginResult>() {
-
-			public void onSuccess(LoginResult result) {
-				MainView mainView= new MainView();
-//				SimpleLayoutPanel sss = (SimpleLayoutPanel) mainView.getWidget(3);
-//				sss.setWidget(profileView);
-				RootPanel.get("content").add(mainView);
-
-				
-			}
-
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
+		MainView mainView = new MainView();
+		RootPanel.get("content").add(mainView);
 	}
 
 }

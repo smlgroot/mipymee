@@ -5,7 +5,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.kalimeradev.mipymee.client.GreetingService;
-import com.kalimeradev.mipymee.client.LoginResult;
+import com.kalimeradev.mipymee.client.ProfileInfo;
 import com.kalimeradev.mipymee.shared.FieldVerifier;
 
 /**
@@ -32,17 +32,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
 		return "Hello, " + input + "!<br><br>I am running " + serverInfo + ".<br><br>It looks like you are using:<br>" + userAgent;
 	}
 
-	public LoginResult retrieveCurrentUser() {
-		LoginResult result = null;
-		UserService userService = UserServiceFactory.getUserService();
-		if (userService != null) {
-			result = new LoginResult();
-			User user = userService.getCurrentUser();
-			result.setUser(user.getNickname());
-			result.setUrl(userService.createLogoutURL(userService.createLoginURL("/")));
-		}
-		return result;
-	}
 
 	/**
 	 * Escape an html string. Escaping data received from the client helps to prevent cross-site script vulnerabilities.

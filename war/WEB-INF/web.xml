@@ -11,6 +11,16 @@
     <url-pattern>/mipymee/greet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>profileServlet</servlet-name>
+    <servlet-class>com.kalimeradev.mipymee.server.ProfileServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>profileServlet</servlet-name>
+    <url-pattern>/mipymee/profile</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

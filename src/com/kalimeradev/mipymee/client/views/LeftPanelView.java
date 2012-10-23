@@ -1,4 +1,4 @@
-package com.kalimeradev.mipymee.client.view;
+package com.kalimeradev.mipymee.client.views;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -30,7 +30,7 @@ public class LeftPanelView extends StackLayoutPanel {
 		 Images images = (Images) GWT.create(Images.class);
 
 		// Create a new stack layout panel.
-		setPixelSize(150, 400);
+		setPixelSize(200, 400);
 
 		// Add the Mail folders.
 		Widget mailHeader = createHeaderWidget("PanelMailHeader", images.mailgroup());
