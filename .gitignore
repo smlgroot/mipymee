@@ -1,5 +1,8 @@
 *.class
 
+*.cache.*
+*.gwt.rpc
+
 # Package Files #
 *.jar
 *.war
