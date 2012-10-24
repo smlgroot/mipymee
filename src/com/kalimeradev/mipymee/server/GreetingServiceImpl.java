@@ -5,7 +5,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.kalimeradev.mipymee.client.GreetingService;
-import com.kalimeradev.mipymee.client.ProfileInfo;
+import com.kalimeradev.mipymee.client.model.ProfileInfo;
 import com.kalimeradev.mipymee.shared.FieldVerifier;
 
 /**

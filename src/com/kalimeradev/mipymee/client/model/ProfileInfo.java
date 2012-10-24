@@ -1,4 +1,4 @@
-package com.kalimeradev.mipymee.client;
+package com.kalimeradev.mipymee.client.model;
 
 import java.io.Serializable;
 

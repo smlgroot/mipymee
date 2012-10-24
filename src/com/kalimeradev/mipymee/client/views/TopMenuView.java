@@ -5,10 +5,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.Widget;
+import com.kalimeradev.mipymee.client.model.ProfileInfo;
 
 public class TopMenuView extends FlowPanel {
 
-	public TopMenuView() {
+	public TopMenuView(final ProfileInfo profileInfo) {
 		setHeight("50px");
 		// Create a command that will execute on menu item selection
 		Command menuCommand = new Command() {
@@ -18,42 +20,37 @@ public class TopMenuView extends FlowPanel {
 			};
 
 			public void execute() {
-				Window.alert(phrases[curPhrase]);
-				curPhrase = (curPhrase + 1) % phrases.length;
+				boolean result = Window.confirm("Salir?");
+
+				if (result) {
+					Window.Location.replace(profileInfo.getLogoutUrl());
+				}
+				/*
+				 * Window.alert(phrases[curPhrase]); curPhrase = (curPhrase + 1) % phrases.length;
+				 */
 			}
 		};
 
 		// Create a menu bar
 		MenuBar menu = new MenuBar();
 		menu.setAutoOpen(true);
-		//menu.setWidth("500px");
+		// menu.setWidth("500px");
 		menu.setAnimationEnabled(true);
 
 		// Create a sub menu of recent documents
-		MenuBar recentDocsMenu = new MenuBar(true);
-		String[] recentDocs = new String[] {
-		"a", "b", "c", "d"
-		};
-		for (int i = 0; i < recentDocs.length; i++) {
-			recentDocsMenu.addItem(recentDocs[i], menuCommand);
-		}
+		MenuBar nuevoSubMenu = new MenuBar(true);
+		nuevoSubMenu.addItem("Factura", menuCommand);
+		nuevoSubMenu.addItem("Recibo", menuCommand);
+		nuevoSubMenu.addItem("Contador", menuCommand);
 
 		// Create the file menu
 		MenuBar fileMenu = new MenuBar(true);
 		fileMenu.setAnimationEnabled(true);
-		menu.addItem(new MenuItem("FileCategory", fileMenu));
-		String[] fileOptions = new String[] {
-		"f1", "f2", "f3", "f4", "f5"
-		};
-		for (int i = 0; i < fileOptions.length; i++) {
-			if (i == 3) {
-				fileMenu.addSeparator();
-				fileMenu.addItem(fileOptions[i], recentDocsMenu);
-				fileMenu.addSeparator();
-			} else {
-				fileMenu.addItem(fileOptions[i], menuCommand);
-			}
-		}
+		fileMenu.addItem("Profile",new  ProfileCommand(this));
+		menu.addItem(new MenuItem("Archivo", fileMenu));
+		fileMenu.addItem("Nuevo", nuevoSubMenu);
+		fileMenu.addSeparator();
+		fileMenu.addItem("Salir", menuCommand);
 
 		// Create the edit menu
 		MenuBar editMenu = new MenuBar(true);
@@ -87,8 +84,20 @@ public class TopMenuView extends FlowPanel {
 		}
 
 		// Return the menu
-		//ensureDebugId("cwMenuBar");
+		// ensureDebugId("cwMenuBar");
 		add(menu);
 	}
 
+	class ProfileCommand implements Command {
+
+		public ProfileCommand(TopMenuView topMenuView) {
+			Widget asasd = topMenuView.getParent();
+			System.out.println(asasd);
+		}
+
+		public void execute() {
+			// TODO Auto-generated method stub
+
+		}
+	}
 }

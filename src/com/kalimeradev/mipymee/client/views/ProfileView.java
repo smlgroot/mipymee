@@ -12,32 +12,21 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.kalimeradev.mipymee.client.ProfileInfo;
 import com.kalimeradev.mipymee.client.ProfileService;
 import com.kalimeradev.mipymee.client.ProfileServiceAsync;
+import com.kalimeradev.mipymee.client.model.ProfileInfo;
 
 public class ProfileView extends DecoratorPanel {
 	private ProfileInfo profileInfo;
-	private Button btnEdit;
-	private HandlerRegistration editHandlerRegistration;
+	private Button btnSaveEdit;
+	private HandlerRegistration saveEditHandlerRegistration;
 
 	private final ProfileServiceAsync profileService = GWT.create(ProfileService.class);
 
-	public ProfileView() {
-
-		profileService.retrieveCurrentUser(new AsyncCallback<ProfileInfo>() {
-
-			public void onSuccess(ProfileInfo result) {
-				profileInfo = result;
-				final FlexTable layout = new FlexTable();
-				init(layout);
-			}
-
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+	public ProfileView(ProfileInfo profileInfo) {
+		this.profileInfo = profileInfo;
+		final FlexTable layout = new FlexTable();
+		init(layout);
 
 	}
 
@@ -67,6 +56,9 @@ public class ProfileView extends DecoratorPanel {
 
 		enableRead(layout);
 
+		// Logout
+		layout.setWidget(5, 0, new Label("RFC:"));
+
 		// Wrap the content in a DecoratorPanel
 		// DecoratorPanel decPanel = new DecoratorPanel();
 		setWidget(layout);
@@ -83,10 +75,10 @@ public class ProfileView extends DecoratorPanel {
 		Label lblRFC = new Label(profileInfo.getRfc());
 		layout.setWidget(3, 1, lblRFC);
 		// Edit Button
-		btnEdit = new Button("Edit");
-		layout.setWidget(4, 0, btnEdit);
+		btnSaveEdit = new Button("Edit");
+		layout.setWidget(4, 0, btnSaveEdit);
 		// editHandlerRegistration.removeHandler();
-		editHandlerRegistration = btnEdit.addClickHandler(new ClickHandler() {
+		saveEditHandlerRegistration = btnSaveEdit.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				enableEdit(layout);
@@ -108,14 +100,24 @@ public class ProfileView extends DecoratorPanel {
 		txtRFC.setText(profileInfo.getRfc());
 		layout.setWidget(3, 1, txtRFC);
 		// Edit Button
-		btnEdit.setText("Save");
-		editHandlerRegistration.removeHandler();
-		editHandlerRegistration = btnEdit.addClickHandler(new ClickHandler() {
+		btnSaveEdit.setText("Save");
+		saveEditHandlerRegistration.removeHandler();
+		saveEditHandlerRegistration = btnSaveEdit.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				profileInfo.setName(txtName.getText());
 				profileInfo.setRfc(txtRFC.getText());
-				enableRead(layout);
+				profileService.saveUser(profileInfo, new AsyncCallback<Boolean>() {
+
+					public void onSuccess(Boolean result) {
+						enableRead(layout);
+					}
+
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+
+					}
+				});
 			}
 		});
 	}
