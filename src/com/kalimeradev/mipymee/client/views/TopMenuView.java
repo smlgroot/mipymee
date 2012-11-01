@@ -5,12 +5,15 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.Widget;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
 
 public class TopMenuView extends FlowPanel {
+	MainView mainView;
+	ProfileInfo profileInfo;
 
-	public TopMenuView(final ProfileInfo profileInfo) {
+	public TopMenuView(final ProfileInfo profileInfo, MainView mainView) {
+		this.mainView = mainView;
+		this.profileInfo = profileInfo;
 		setHeight("50px");
 		// Create a command that will execute on menu item selection
 		Command menuCommand = new Command() {
@@ -37,18 +40,18 @@ public class TopMenuView extends FlowPanel {
 		// menu.setWidth("500px");
 		menu.setAnimationEnabled(true);
 
-		// Create a sub menu of recent documents
-		MenuBar nuevoSubMenu = new MenuBar(true);
-		nuevoSubMenu.addItem("Factura", menuCommand);
-		nuevoSubMenu.addItem("Recibo", menuCommand);
-		nuevoSubMenu.addItem("Contador", menuCommand);
+		// Menu Manage
+		MenuBar manageSubMenu = new MenuBar(true);
+		manageSubMenu.addItem("Facturas", new ManageFacturasCommand());
+		manageSubMenu.addItem("Recibos", menuCommand);
+		manageSubMenu.addItem("Contadores", menuCommand);
 
 		// Create the file menu
 		MenuBar fileMenu = new MenuBar(true);
 		fileMenu.setAnimationEnabled(true);
-		fileMenu.addItem("Profile",new  ProfileCommand(this));
+		fileMenu.addItem("Profile", new ProfileCommand());
 		menu.addItem(new MenuItem("Archivo", fileMenu));
-		fileMenu.addItem("Nuevo", nuevoSubMenu);
+		fileMenu.addItem("Manage", manageSubMenu);
 		fileMenu.addSeparator();
 		fileMenu.addItem("Salir", menuCommand);
 
@@ -90,14 +93,28 @@ public class TopMenuView extends FlowPanel {
 
 	class ProfileCommand implements Command {
 
-		public ProfileCommand(TopMenuView topMenuView) {
-			Widget asasd = topMenuView.getParent();
-			System.out.println(asasd);
+		public void execute() {
+			cleanCenterPanel();
+			// Adds a single new element.
+			ProfileView profileView = new ProfileView(profileInfo);
+			mainView.centerPanel.add(profileView);
 		}
+	}
+
+	class ManageFacturasCommand implements Command {
 
 		public void execute() {
-			// TODO Auto-generated method stub
-
+			cleanCenterPanel();
+			// Adds a single new element.
+			FacturasView facturasView= new FacturasView(profileInfo);
+			mainView.centerPanel.add(facturasView);
 		}
+	}
+
+	private void cleanCenterPanel() {
+		// Removes all children.
+		//for (int i = 0; i < mainView.centerPanel.getWidgetCount(); i++) {
+			mainView.centerPanel.clear();
+		//}
 	}
 }

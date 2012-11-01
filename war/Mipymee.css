@@ -19,9 +19,9 @@ h1 {
 }
 
 /** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
+/*.gwt-DialogBox {
   width: 400px;
-}
+}*/
 
 .dialogVPanel {
   margin: 5px;
@@ -43,6 +43,9 @@ width:100%;
 .cw-MenuBar{
 height:150px;
 }
+.dateBoxPopup {
+	z-index: 100;
+	}
 /*.cw-DockPanel td {
   border: 1px solid #BBBBBB;
   padding: 0px;

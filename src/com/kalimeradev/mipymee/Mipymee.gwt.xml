@@ -10,7 +10,16 @@
   <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+	
 
+    <source path="org.apache.commons.lang3.math.NumberUtils"/> 
+    
+<inherits name="org.hibernate.validator.HibernateValidator" />
+<replace-with
+  class="com.kalimeradev.mipymee.client.validator.SampleValidatorFactory">
+  <when-type-is class="javax.validation.ValidatorFactory" />
+</replace-with>
+    
   <!-- Other module inherits                                      -->
 
   <!-- Specify the app entry point class.                         -->

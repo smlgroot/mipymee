@@ -19,6 +19,7 @@ import com.kalimeradev.mipymee.client.model.ProfileInfo;
 public class ProfileView extends DecoratorPanel {
 	private ProfileInfo profileInfo;
 	private Button btnSaveEdit;
+	private Button btnCancelEdit;
 	private HandlerRegistration saveEditHandlerRegistration;
 
 	private final ProfileServiceAsync profileService = GWT.create(ProfileService.class);
@@ -50,14 +51,11 @@ public class ProfileView extends DecoratorPanel {
 		layout.setWidget(2, 0, new Label("Name:"));
 		// RFC
 		layout.setWidget(3, 0, new Label("RFC:"));
-		// Edit Button
-		cellFormatter.setColSpan(4, 0, 2);
+		// Buttons
+		//cellFormatter.setColSpan(4, 0, 2);
 		cellFormatter.setHorizontalAlignment(4, 0, HasHorizontalAlignment.ALIGN_CENTER);
 
 		enableRead(layout);
-
-		// Logout
-		layout.setWidget(5, 0, new Label("RFC:"));
 
 		// Wrap the content in a DecoratorPanel
 		// DecoratorPanel decPanel = new DecoratorPanel();
@@ -84,6 +82,10 @@ public class ProfileView extends DecoratorPanel {
 				enableEdit(layout);
 			}
 		});
+		//Cancel Button
+		if(btnCancelEdit!=null){
+			btnCancelEdit.removeFromParent();
+		}
 	}
 
 	private void enableEdit(final FlexTable layout) {
@@ -120,5 +122,14 @@ public class ProfileView extends DecoratorPanel {
 				});
 			}
 		});
+		// Cancel Button
+		btnCancelEdit = new Button("Cancel");
+		btnCancelEdit.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				enableRead(layout);				
+			}
+		});
+		layout.setWidget(4, 1, btnCancelEdit);
 	}
 }
