@@ -9,7 +9,9 @@ public class BoxEvent extends GwtEvent<BoxEventHandler> {
 	public static Type<BoxEventHandler> TYPE = new Type<BoxEventHandler>();
 
 	public BoxEvent(TreeItem selectedItem) {
-		this.selectedItem = selectedItem;
+		if (selectedItem != null) {
+			this.selectedItem = selectedItem;
+		}
 	}
 
 	@Override

@@ -12,9 +12,9 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.kalimeradev.mipymee.client.ProfileService;
-import com.kalimeradev.mipymee.client.ProfileServiceAsync;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
+import com.kalimeradev.mipymee.client.service.ProfileService;
+import com.kalimeradev.mipymee.client.service.ProfileServiceAsync;
 
 public class ProfileView extends DecoratorPanel {
 	private ProfileInfo profileInfo;

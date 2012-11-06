@@ -11,7 +11,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.kalimeradev.mipymee.client.events.ProfileEvent;
+import com.kalimeradev.mipymee.client.events.ProfileEventHandler;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
+import com.kalimeradev.mipymee.client.service.ProfileService;
+import com.kalimeradev.mipymee.client.service.ProfileServiceAsync;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -71,23 +75,40 @@ public class Mipymee implements EntryPoint {
 
 	}
 
-	
-
 	private void init() {
+		
+		// ////
+		profileService.saveUser(profileInfo, new AsyncCallback<Boolean>() {
 
+			public void onSuccess(Boolean result) {
+				System.out.println("Profile Info Saved:");
+			}
+
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		////////
+		// //
+		AppUtils.EVENT_BUS.addHandler(ProfileEvent.TYPE, new ProfileEventHandler() {
+
+			public ProfileInfo onRequestLoggedUser() {
+				return Mipymee.this.profileInfo;
+			}
+
+		});
+		// //
+		// ///////
 		GWT.<GlobalResources> create(GlobalResources.class).css().ensureInjected();
-		// Create the UI defined in Mail.ui.xml.
 		DockLayoutPanel outer = binder.createAndBindUi(this);
 		// ///
 		topPanel.setProfileInfo(profileInfo);
 		// ///
-		boxList.setListener(new BoxList.Listener() {
-			public void onItemSelected(BoxItem item) {
-				boxDetail.setItem(item);
-			}
-		});
 		RootLayoutPanel root = RootLayoutPanel.get();
 		root.add(outer);
+
+
 	}
 
 	@UiFactory

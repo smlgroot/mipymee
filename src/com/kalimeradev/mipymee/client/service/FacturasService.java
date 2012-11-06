@@ -1,4 +1,4 @@
-package com.kalimeradev.mipymee.client;
+package com.kalimeradev.mipymee.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -9,7 +9,9 @@ import com.kalimeradev.mipymee.client.model.Factura;
  */
 @RemoteServiceRelativePath("facturas")
 public interface FacturasService extends RemoteService {
-	public Factura[] retrieveFacturasByRfc(String rfc) ;
+	public Factura[] retrieveFacturasByUserId(String clienteId);
 
-	public Boolean saveFactura(Factura factura,String clienteId) ;
+	public Factura retrieveFacturaByFacturaId(String facturaId);
+
+	public String saveFactura(Factura factura, String clienteId);
 }

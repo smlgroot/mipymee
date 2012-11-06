@@ -32,9 +32,13 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.kalimeradev.mipymee.client.events.BoxDetailEvent;
 import com.kalimeradev.mipymee.client.events.BoxEvent;
 import com.kalimeradev.mipymee.client.events.BoxEventHandler;
+import com.kalimeradev.mipymee.client.events.ProfileEvent;
 import com.kalimeradev.mipymee.client.model.Factura;
+import com.kalimeradev.mipymee.client.service.FacturasService;
+import com.kalimeradev.mipymee.client.service.FacturasServiceAsync;
 
 /**
  * A composite that displays a list of emails that can be selected.
@@ -42,14 +46,11 @@ import com.kalimeradev.mipymee.client.model.Factura;
 public class BoxList extends ResizeComposite {
 
 	private final FacturasServiceAsync facturasService = GWT.create(FacturasService.class);
-	BoxItem[] boxItems;
+	Factura[] facturaItems;
 
 	/**
 	 * Callback when mail items are selected.
 	 */
-	public interface Listener {
-		void onItemSelected(BoxItem item);
-	}
 
 	interface Binder extends UiBinder<Widget, BoxList> {
 	}
@@ -71,34 +72,34 @@ public class BoxList extends ResizeComposite {
 	@UiField
 	MenuItem commandNuevo;
 
-	private Listener listener;
 	private int startIndex, selectedRow = -1;
 	private NavBar navBar;
 
 	public BoxList() {
+		// //////////
+
+		// /////////
 		initWidget(binder.createAndBindUi(this));
 		navBar = new NavBar(this);
-		iniHandler("");
+
+		ProfileEvent profileEvent = new ProfileEvent();
+		AppUtils.EVENT_BUS.fireEvent(profileEvent);
+
+		iniHandler(profileEvent.getProfileInfo().getEmail());
 		//
 		final DialogBox dialogBox = createDialogBox();
-	    dialogBox.setGlassEnabled(true);
-	    dialogBox.setAnimationEnabled(true);
+		dialogBox.setGlassEnabled(true);
+		dialogBox.setAnimationEnabled(true);
 		commandNuevo.setCommand(new Command() {
 
 			public void execute() {
+
 				dialogBox.center();
 				dialogBox.show();
 
 			}
 		});
 		//
-	}
-
-	/**
-	 * Sets the listener that will be notified when an item is selected.
-	 */
-	public void setListener(Listener listener) {
-		this.listener = listener;
 	}
 
 	/*
@@ -120,7 +121,7 @@ public class BoxList extends ResizeComposite {
 	void older() {
 		// Move forward a page.
 		startIndex += VISIBLE_EMAIL_COUNT;
-		if (startIndex >= boxItems.length) {
+		if (startIndex >= facturaItems.length) {
 			startIndex -= VISIBLE_EMAIL_COUNT;
 		} else {
 			styleRow(selectedRow, false);
@@ -146,13 +147,15 @@ public class BoxList extends ResizeComposite {
 		// Initialize the header.
 		header.getColumnFormatter().setWidth(0, "128px");
 		header.getColumnFormatter().setWidth(1, "192px");
-		header.getColumnFormatter().setWidth(3, "256px");
+		header.getColumnFormatter().setWidth(3, "192px");
+		header.getColumnFormatter().setWidth(4, "256px");
 
 		header.setText(0, 0, "RFC");
 		header.setText(0, 1, "IVA");
 		header.setText(0, 2, "Total");
-		header.setWidget(0, 3, navBar);
-		header.getCellFormatter().setHorizontalAlignment(0, 3, HasHorizontalAlignment.ALIGN_RIGHT);
+		header.setText(0, 3, "Fecha");
+		header.setWidget(0, 4, navBar);
+		header.getCellFormatter().setHorizontalAlignment(0, 4, HasHorizontalAlignment.ALIGN_RIGHT);
 
 		// Initialize the table.
 		table.getColumnFormatter().setWidth(0, "128px");
@@ -169,7 +172,7 @@ public class BoxList extends ResizeComposite {
 	private void selectRow(int row) {
 		// When a row (other than the first one, which is used as a header) is
 		// selected, display its associated MailItem.
-		BoxItem item = boxItems[startIndex + row];
+		Factura item = facturaItems[startIndex + row];
 		if (item == null) {
 			return;
 		}
@@ -177,12 +180,11 @@ public class BoxList extends ResizeComposite {
 		styleRow(selectedRow, false);
 		styleRow(row, true);
 
-		item.read = true;
 		selectedRow = row;
 
-		if (listener != null) {
-			listener.onItemSelected(item);
-		}
+		// ///
+		AppUtils.EVENT_BUS.fireEvent(new BoxDetailEvent(item));
+		// ///
 	}
 
 	private void styleRow(int row, boolean selected) {
@@ -198,40 +200,42 @@ public class BoxList extends ResizeComposite {
 	}
 
 	private void update() {
+
 		// Update the older/newer buttons & label.
-		int count = boxItems.length;
+		int count = facturaItems.length;
 		int max = startIndex + VISIBLE_EMAIL_COUNT;
 		if (max > count) {
 			max = count;
 		}
-
-		// Update the nav bar.
-		navBar.update(startIndex, count, max);
-
-		// Show the selected emails.
-		int i = 0;
-		for (; i < VISIBLE_EMAIL_COUNT; ++i) {
-			// Don't read past the end.
-			if (startIndex + i >= boxItems.length) {
-				break;
-			}
-
-			BoxItem item = boxItems[startIndex + i];
-
-			// Add a new row to the table, then set each of its columns to the
-			// email's sender and subject values.
-			table.setText(i, 0, item.sender);
-			table.setText(i, 1, item.email);
-			table.setText(i, 2, item.subject);
+		// Clear table.
+		for (int i = 0; i < table.getRowCount(); i++) {
+			table.removeRow(i);
 		}
+		if (count > 0) {
+			// Update the nav bar.
+			navBar.update(startIndex, count, max);
 
-		// Clear any remaining slots.
-		// for (; i < VISIBLE_EMAIL_COUNT; ++i) {
-		// table.removeRow(table.getRowCount() - 1);
-		// }
+			// Show the selected emails.
+			int i = 0;
+			for (; i < VISIBLE_EMAIL_COUNT; ++i) {
+				// Don't read past the end.
+				if (startIndex + i >= facturaItems.length) {
+					break;
+				}
+
+				Factura item = facturaItems[startIndex + i];
+
+				// Add a new row to the table, then set each of its columns to the
+				// email's sender and subject values.
+				table.setText(i, 0, item.getRfc());
+				table.setText(i, 1, String.valueOf(item.getIva()));
+				table.setText(i, 2, String.valueOf(item.getTotal()));
+				table.setText(i, 3, String.valueOf(item.getFecha()));
+			}
+		}
 	}
 
-	private void iniHandler(final String rfc) {
+	private void iniHandler(final String clienteId) {
 		// //
 		AppUtils.EVENT_BUS.addHandler(BoxEvent.TYPE, new BoxEventHandler() {
 
@@ -239,13 +243,17 @@ public class BoxList extends ResizeComposite {
 
 				// ///////
 
-				facturasService.retrieveFacturasByRfc(rfc, new AsyncCallback<Factura[]>() {
+				facturasService.retrieveFacturasByUserId(clienteId, new AsyncCallback<Factura[]>() {
 
 					public void onSuccess(Factura[] facturas) {
 						// //Creates items
-						boxItems = new BoxItem[facturas.length];
+						facturaItems = new Factura[facturas.length];
 						for (int i = 0; i < facturas.length; i++) {
-							boxItems[i] = new BoxItem(facturas[i].getRfc(), "" + facturas[i].getIva(), "" + facturas[i].getTotal(), "x");
+							facturaItems[i] = new Factura();
+							facturaItems[i].setRfc(facturas[i].getRfc());
+							facturaItems[i].setIva(facturas[i].getIva());
+							facturaItems[i].setTotal(facturas[i].getTotal());
+							facturaItems[i].setFecha(facturas[i].getFecha());
 						}
 						// //
 						initTable();
@@ -268,41 +276,40 @@ public class BoxList extends ResizeComposite {
 	}
 
 	private DialogBox createDialogBox() {
-		
 
-		MyDialogBox dialogBox = new MyDialogBox();
-//
-//		
-//		// Create a dialog box and set the caption text
-//		final DialogBox dialogBox = new DialogBox();
-//		dialogBox.ensureDebugId("cwDialogBox");
-//		dialogBox.setText("Nuevo");
-//
-//		// Create a table to layout the content
-//		VerticalPanel dialogContents = new VerticalPanel();
-//		dialogContents.setSpacing(4);
-//		dialogBox.setWidget(dialogContents);
-//
-//		// Add some text to the top of the dialog
-//		HTML details = new HTML("Details");
-//		dialogContents.add(details);
-//		dialogContents.setCellHorizontalAlignment(details, HasHorizontalAlignment.ALIGN_CENTER);
-//
-//		// Add a close button at the bottom of the dialog
-//		Button closeButton = new Button("Close", new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				dialogBox.hide();
-//			}
-//		});
-//		dialogContents.add(closeButton);
-//		if (LocaleInfo.getCurrentLocale().isRTL()) {
-//			dialogContents.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_LEFT);
-//
-//		} else {
-//			dialogContents.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_RIGHT);
-//		}
-//
-//		// Return the dialog box
+		FacturaDialogBox dialogBox = new FacturaDialogBox();
+		//
+		//
+		// // Create a dialog box and set the caption text
+		// final DialogBox dialogBox = new DialogBox();
+		// dialogBox.ensureDebugId("cwDialogBox");
+		// dialogBox.setText("Nuevo");
+		//
+		// // Create a table to layout the content
+		// VerticalPanel dialogContents = new VerticalPanel();
+		// dialogContents.setSpacing(4);
+		// dialogBox.setWidget(dialogContents);
+		//
+		// // Add some text to the top of the dialog
+		// HTML details = new HTML("Details");
+		// dialogContents.add(details);
+		// dialogContents.setCellHorizontalAlignment(details, HasHorizontalAlignment.ALIGN_CENTER);
+		//
+		// // Add a close button at the bottom of the dialog
+		// Button closeButton = new Button("Close", new ClickHandler() {
+		// public void onClick(ClickEvent event) {
+		// dialogBox.hide();
+		// }
+		// });
+		// dialogContents.add(closeButton);
+		// if (LocaleInfo.getCurrentLocale().isRTL()) {
+		// dialogContents.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_LEFT);
+		//
+		// } else {
+		// dialogContents.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_RIGHT);
+		// }
+		//
+		// // Return the dialog box
 		return dialogBox;
 	}
 

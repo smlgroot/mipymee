@@ -6,9 +6,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.kalimeradev.mipymee.client.ProfileService;
-import com.kalimeradev.mipymee.client.ProfileServiceAsync;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
+import com.kalimeradev.mipymee.client.service.ProfileService;
+import com.kalimeradev.mipymee.client.service.ProfileServiceAsync;
 
 public class MainView extends DockPanel {
 

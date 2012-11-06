@@ -29,9 +29,9 @@ import com.google.gwt.view.client.SelectionModel;
 import com.kalimeradev.mipymee.client.ContactDatabase;
 import com.kalimeradev.mipymee.client.ContactDatabase.Category;
 import com.kalimeradev.mipymee.client.ContactDatabase.ContactInfo;
-import com.kalimeradev.mipymee.client.ProfileService;
-import com.kalimeradev.mipymee.client.ProfileServiceAsync;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
+import com.kalimeradev.mipymee.client.service.ProfileService;
+import com.kalimeradev.mipymee.client.service.ProfileServiceAsync;
 
 public class FacturasView extends FlowPanel {
 	private ProfileInfo profileInfo;

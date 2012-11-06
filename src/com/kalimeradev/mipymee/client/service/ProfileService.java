@@ -1,4 +1,4 @@
-package com.kalimeradev.mipymee.client;
+package com.kalimeradev.mipymee.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

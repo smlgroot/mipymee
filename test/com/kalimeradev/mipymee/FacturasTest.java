@@ -29,7 +29,7 @@ public class FacturasTest {
 	// @Test
 	public void testRetrieveFacturasByRfc() {
 		FacturasServiceImpl service = new FacturasServiceImpl();
-		Factura[] res = service.retrieveFacturasByRfc("aaaa");
+		Factura[] res = service.retrieveFacturasByUserId("aaaa");
 		assertNotNull(res);
 	}
 
@@ -41,7 +41,7 @@ public class FacturasTest {
 		factura.setIva(10.10);
 		factura.setTotal(1000.10);
 
-		boolean res = service.saveFactura(factura, "test@example.com");
-		assert (res);
+		String res = service.saveFactura(factura, "test@example.com");
+		assertNotNull (res);
 	}
 }

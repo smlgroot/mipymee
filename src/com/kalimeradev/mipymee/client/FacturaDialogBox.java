@@ -26,7 +26,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -38,19 +37,27 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.kalimeradev.mipymee.client.events.BoxEvent;
+import com.kalimeradev.mipymee.client.events.FacturaDialogBoxEvent;
+import com.kalimeradev.mipymee.client.events.FacturaDialogBoxEventHandler;
+import com.kalimeradev.mipymee.client.events.ProfileEvent;
 import com.kalimeradev.mipymee.client.model.Factura;
+import com.kalimeradev.mipymee.client.service.FacturasService;
+import com.kalimeradev.mipymee.client.service.FacturasServiceAsync;
 
 /**
  * A simple example of an 'about' dialog box.
  */
-public class MyDialogBox extends DialogBox {
+public class FacturaDialogBox extends DialogBox {
 
 	private final FacturasServiceAsync facturasService = GWT.create(FacturasService.class);
 
-	interface Binder extends UiBinder<Widget, MyDialogBox> {
+	interface Binder extends UiBinder<Widget, FacturaDialogBox> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
+
+	Factura factura = null;
 
 	@UiField
 	TextBox rfc;
@@ -68,7 +75,27 @@ public class MyDialogBox extends DialogBox {
 	@UiField
 	Label messagesLabel;
 
-	public MyDialogBox() {
+	public FacturaDialogBox() {
+		// //
+		AppUtils.EVENT_BUS.addHandler(FacturaDialogBoxEvent.TYPE, new FacturaDialogBoxEventHandler() {
+
+			public void onRequestFactura(String facturaId) {
+				facturasService.retrieveFacturaByFacturaId(facturaId, new AsyncCallback<Factura>() {
+
+					public void onSuccess(Factura result) {
+						enbableRead(result);
+					}
+
+					public void onFailure(Throwable caught) {
+						messagesLabel.setText("Error al leer la factura.");
+					}
+				});
+
+				factura = new Factura();
+			}
+
+		});
+		// //
 		// Use this opportunity to set the dialog's caption.
 		setText("Nuevo");
 		setWidget(binder.createAndBindUi(this));
@@ -102,11 +129,8 @@ public class MyDialogBox extends DialogBox {
 	@UiHandler("guardarButton")
 	void onGuardarClicked(ClickEvent event) {
 
-		
-
 		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-		Factura factura = new Factura();
 		factura.setRfc(rfc.getValue());
 		factura.setIva(iva.getValue());
 		factura.setTotal(total.getValue());
@@ -117,11 +141,15 @@ public class MyDialogBox extends DialogBox {
 
 		if (violations.size() <= 0) {
 
-			facturasService.saveFactura(factura, "test@example.com", new AsyncCallback<Boolean>() {
+			ProfileEvent profileEvent = new ProfileEvent();
+			AppUtils.EVENT_BUS.fireEvent(profileEvent);
 
-				public void onSuccess(Boolean result) {
+			facturasService.saveFactura(factura, profileEvent.getProfileInfo().getEmail(), new AsyncCallback<String>() {
+
+				public void onSuccess(String result) {
 					messagesLabel.setText("SUCCESS");
-
+					enbableRead(null);
+					AppUtils.EVENT_BUS.fireEvent(new BoxEvent(null));
 				}
 
 				public void onFailure(Throwable caught) {
@@ -139,5 +167,35 @@ public class MyDialogBox extends DialogBox {
 			messagesLabel.setText(vi.toString());
 		}
 		// hide();
+	}
+
+	private void enableEdit() {
+
+		rfc.setReadOnly(false);
+		iva.setReadOnly(false);
+		total.setReadOnly(false);
+		fecha.setEnabled(true);
+
+		closeButton.setText("Cancelar");
+		guardarButton.setText("Guardar");
+		messagesLabel.setText("");
+	}
+
+	private void enbableRead(Factura factura) {
+		// ////
+		rfc.setText(factura.getRfc());
+		iva.setText(String.valueOf(factura.getIva()));
+		total.setText(String.valueOf(factura.getTotal()));
+		fecha.setValue(factura.getFecha());
+		// ///
+
+		rfc.setReadOnly(true);
+		iva.setReadOnly(true);
+		total.setReadOnly(true);
+		fecha.setEnabled(false);
+
+		closeButton.setText("Cerrar");
+		guardarButton.setText("Editar");
+		// messagesLabel;
 	}
 }

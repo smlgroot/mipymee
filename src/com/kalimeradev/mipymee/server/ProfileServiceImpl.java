@@ -10,8 +10,8 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.kalimeradev.mipymee.client.ProfileService;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
+import com.kalimeradev.mipymee.client.service.ProfileService;
 
 /**
  * The server side implementation of the RPC service.
