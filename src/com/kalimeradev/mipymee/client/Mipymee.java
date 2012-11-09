@@ -107,7 +107,9 @@ public class Mipymee implements EntryPoint {
 		// ///
 		RootLayoutPanel root = RootLayoutPanel.get();
 		root.add(outer);
+/////
 
+		/////
 
 	}
 

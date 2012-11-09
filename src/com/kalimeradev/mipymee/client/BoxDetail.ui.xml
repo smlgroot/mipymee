@@ -41,15 +41,19 @@
         </g:HTMLPanel>
     </g:north> 
     <g:west size="200">
-      <g:HTMLPanel styleName='{style.form}'>
-        <div class='{style.headerItem}'><b>RFC:</b><g:TextBox   ui:field="rfc"/></div>
-        <div class='{style.headerItem}'><b>IVA:</b><g:TextBox   ui:field="iva"/></div>
-        <div class='{style.headerItem}'><b>Total:</b> <g:TextBox   ui:field="total"/></div>
-        <div class='{style.headerItem}'><b>Fecha:</b> <dp:DateBox ui:field="fecha"/></div>
-        <div class='{style.buttons}'>
-      		<g:Button text='Guardar' ui:field="guardarButton"/>
-    	</div>
-      </g:HTMLPanel>
+      <g:ScrollPanel>
+	      <g:HTMLPanel styleName='{style.form}'>
+	        <div class='{style.headerItem}'><b>keyName:</b><g:TextBox   ui:field="keyName"/></div>
+	        <div class='{style.headerItem}'><b>RFC:</b><g:TextBox   ui:field="rfc"/></div>
+	        <div class='{style.headerItem}'><b>IVA:</b><g:TextBox   ui:field="iva"/></div>
+	        <div class='{style.headerItem}'><b>Total:</b> <g:TextBox   ui:field="total"/></div>
+	        <div class='{style.headerItem}'><b>Fecha:</b> <dp:DateBox ui:field="fecha"/></div>
+	        <div class='{style.buttons}'>
+	      		<g:Button text='Guardar' ui:field="saveButton"/>
+	      		<g:Button text='Editar' ui:field="editButton"/>
+	    	</div>
+	      </g:HTMLPanel>
+      </g:ScrollPanel>
     </g:west>
 
     <g:center>

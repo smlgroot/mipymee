@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -37,6 +38,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.kalimeradev.mipymee.client.events.BoxDetailBtnNewEvent;
 import com.kalimeradev.mipymee.client.events.BoxDetailEvent;
 import com.kalimeradev.mipymee.client.events.BoxDetailEventHandler;
 import com.kalimeradev.mipymee.client.events.BoxEvent;
@@ -62,6 +64,8 @@ public class BoxDetail extends ResizeComposite {
 	@UiField
 	DockLayoutPanel panel;
 	@UiField
+	TextBox keyName;
+	@UiField
 	TextBox rfc;
 	@UiField
 	TextBox iva;
@@ -70,15 +74,13 @@ public class BoxDetail extends ResizeComposite {
 	@UiField
 	DateBox fecha;
 	@UiField
-	Button guardarButton;
+	Button saveButton;
+	@UiField
+	Button editButton;
 	@UiField
 	Element messagesLabel;
 	@UiField
 	HTML body;
-
-	private HandlerRegistration enableReadHandler;
-
-	private HandlerRegistration guardarHandler;
 
 	public BoxDetail() {
 		// ///////////
@@ -88,11 +90,37 @@ public class BoxDetail extends ResizeComposite {
 				setItem(item);
 			}
 		});
+		// ////
+		AppUtils.EVENT_BUS.addHandler(BoxDetailBtnNewEvent.TYPE, new BoxDetailBtnNewEvent.BoxDetailBtnNewEventHandler() {
+
+			public void onEvent(BoxDetailBtnNewEvent event) {
+				enableNew();
+			}
+
+		});
+
+		// ///////
 		// ///////////
 		initWidget(binder.createAndBindUi(this));
+		// /////////
+		editButton.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				enableEdit();
+			}
+		});
+		saveButton.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				onGuardarClicked();
+			}
+		});
+		// ////////
+		editButton.setVisible(false);
+		saveButton.setVisible(false);
 		panel.setVisible(false);
-		//////////
-		
+		// ////////
+
 	}
 
 	private void setItem(Factura item) {
@@ -122,11 +150,13 @@ public class BoxDetail extends ResizeComposite {
 			ProfileEvent profileEvent = new ProfileEvent();
 			AppUtils.EVENT_BUS.fireEvent(profileEvent);
 
-			facturasService.saveFactura(factura, profileEvent.getProfileInfo().getEmail(), new AsyncCallback<String>() {
+			facturasService.saveFactura(factura, profileEvent.getProfileInfo().getEmail(), new AsyncCallback<Long>() {
 
-				public void onSuccess(String result) {
+				public void onSuccess(Long result) {
 					messagesLabel.setInnerHTML("SUCCESS");
 					AppUtils.EVENT_BUS.fireEvent(new BoxEvent(null));
+					//
+					factura.setId(result);
 					enableRead(factura);
 				}
 
@@ -146,28 +176,36 @@ public class BoxDetail extends ResizeComposite {
 		}
 	}
 
-	private void enableEdit() {
-		enableReadHandler.removeHandler();
-		guardarHandler = guardarButton.addClickHandler(new ClickHandler() {
+	private void enableNew() {
+		factura = new Factura();
+		/////
+		keyName.setText("");
+		rfc.setText("");
+		iva.setText("");
+		total.setText("");
+		fecha.setValue(null);
+		//////
+		enableEdit();
+		panel.setVisible(true);
+	}
 
-			public void onClick(ClickEvent event) {
-				onGuardarClicked();
-			}
-		});
+	private void enableEdit() {
+
 		// //
 		rfc.setReadOnly(false);
 		iva.setReadOnly(false);
 		total.setReadOnly(false);
 		fecha.setEnabled(true);
-		guardarButton.setText("Guardar");
+		saveButton.setVisible(true);
+		editButton.setVisible(false);
+		panel.setVisible(true);
 		// ////
 	}
 
 	private void enableRead(Factura factura) {
-		if (guardarHandler != null) {
-			guardarHandler.removeHandler();
-		}
+
 		// ////
+		keyName.setText(String.valueOf(factura.getId()));
 		rfc.setText(factura.getRfc());
 		iva.setText(String.valueOf(factura.getIva()));
 		total.setText(String.valueOf(factura.getTotal()));
@@ -178,15 +216,11 @@ public class BoxDetail extends ResizeComposite {
 		iva.setReadOnly(true);
 		total.setReadOnly(true);
 		fecha.setEnabled(false);
-		guardarButton.setText("Editar");
+		editButton.setVisible(true);
+		saveButton.setVisible(false);
+		panel.setVisible(true);
 		// ////
-		enableReadHandler = guardarButton.addClickHandler(new ClickHandler() {
 
-			public void onClick(ClickEvent event) {
-				enableEdit();
-			}
-		});
-
-		// messagesLabel;
 	}
+
 }

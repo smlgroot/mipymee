@@ -11,6 +11,7 @@ public class AppUtils {
 
 	public static EventBus EVENT_BUS = GWT.create(SimpleEventBus.class);
 
+
 	/**
 	 * <p>
 	 * Convert a <code>String</code> to a <code>Float</code>.

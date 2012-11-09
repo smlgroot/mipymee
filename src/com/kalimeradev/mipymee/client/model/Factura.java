@@ -11,6 +11,7 @@ import com.kalimeradev.mipymee.client.AppUtils;
 
 @SuppressWarnings("serial")
 public class Factura implements Serializable {
+	private Long id;
 	@NotNull
 	@Size(min = 4)
 	private String rfc;
@@ -59,8 +60,20 @@ public class Factura implements Serializable {
 
 	// ////////
 
+
+
+
+
 	public void setIva(String iva) {
 		this.iva = AppUtils.createDouble(iva);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public void setTotal(String total) {

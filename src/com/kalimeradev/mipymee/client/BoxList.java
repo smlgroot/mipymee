@@ -17,13 +17,13 @@ package com.kalimeradev.mipymee.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.kalimeradev.mipymee.client.events.BoxDetailBtnNewEvent;
 import com.kalimeradev.mipymee.client.events.BoxDetailEvent;
 import com.kalimeradev.mipymee.client.events.BoxEvent;
 import com.kalimeradev.mipymee.client.events.BoxEventHandler;
@@ -87,16 +88,11 @@ public class BoxList extends ResizeComposite {
 
 		iniHandler(profileEvent.getProfileInfo().getEmail());
 		//
-		final DialogBox dialogBox = createDialogBox();
-		dialogBox.setGlassEnabled(true);
-		dialogBox.setAnimationEnabled(true);
 		commandNuevo.setCommand(new Command() {
 
 			public void execute() {
-
-				dialogBox.center();
-				dialogBox.show();
-
+				Type<BoxDetailBtnNewEvent> TYPE = new Type<BoxDetailBtnNewEvent>();
+				AppUtils.EVENT_BUS.fireEvent(new BoxDetailBtnNewEvent());
 			}
 		});
 		//
@@ -147,6 +143,7 @@ public class BoxList extends ResizeComposite {
 		// Initialize the header.
 		header.getColumnFormatter().setWidth(0, "128px");
 		header.getColumnFormatter().setWidth(1, "192px");
+		header.getColumnFormatter().setWidth(2, "192px");
 		header.getColumnFormatter().setWidth(3, "192px");
 		header.getColumnFormatter().setWidth(4, "256px");
 
@@ -160,6 +157,9 @@ public class BoxList extends ResizeComposite {
 		// Initialize the table.
 		table.getColumnFormatter().setWidth(0, "128px");
 		table.getColumnFormatter().setWidth(1, "192px");
+		table.getColumnFormatter().setWidth(2, "192px");
+		table.getColumnFormatter().setWidth(3, "192px");
+		table.getColumnFormatter().setWidth(4, "256px");
 
 	}
 
@@ -250,6 +250,7 @@ public class BoxList extends ResizeComposite {
 						facturaItems = new Factura[facturas.length];
 						for (int i = 0; i < facturas.length; i++) {
 							facturaItems[i] = new Factura();
+							facturaItems[i].setId(facturas[i].getId());
 							facturaItems[i].setRfc(facturas[i].getRfc());
 							facturaItems[i].setIva(facturas[i].getIva());
 							facturaItems[i].setTotal(facturas[i].getTotal());
@@ -273,44 +274,6 @@ public class BoxList extends ResizeComposite {
 		});
 		// //
 
-	}
-
-	private DialogBox createDialogBox() {
-
-		FacturaDialogBox dialogBox = new FacturaDialogBox();
-		//
-		//
-		// // Create a dialog box and set the caption text
-		// final DialogBox dialogBox = new DialogBox();
-		// dialogBox.ensureDebugId("cwDialogBox");
-		// dialogBox.setText("Nuevo");
-		//
-		// // Create a table to layout the content
-		// VerticalPanel dialogContents = new VerticalPanel();
-		// dialogContents.setSpacing(4);
-		// dialogBox.setWidget(dialogContents);
-		//
-		// // Add some text to the top of the dialog
-		// HTML details = new HTML("Details");
-		// dialogContents.add(details);
-		// dialogContents.setCellHorizontalAlignment(details, HasHorizontalAlignment.ALIGN_CENTER);
-		//
-		// // Add a close button at the bottom of the dialog
-		// Button closeButton = new Button("Close", new ClickHandler() {
-		// public void onClick(ClickEvent event) {
-		// dialogBox.hide();
-		// }
-		// });
-		// dialogContents.add(closeButton);
-		// if (LocaleInfo.getCurrentLocale().isRTL()) {
-		// dialogContents.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_LEFT);
-		//
-		// } else {
-		// dialogContents.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		// }
-		//
-		// // Return the dialog box
-		return dialogBox;
 	}
 
 }
