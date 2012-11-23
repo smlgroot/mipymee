@@ -17,7 +17,6 @@ package com.kalimeradev.mipymee.client;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -29,7 +28,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.kalimeradev.mipymee.client.events.BoxEvent;
+import com.kalimeradev.mipymee.client.events.BoxListLeafSelectedEvent;
+import com.kalimeradev.mipymee.client.events.BoxesUpdateTreeEvent;
+import com.kalimeradev.mipymee.client.model.BoxObject;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
 import com.kalimeradev.mipymee.client.service.FacturasService;
 import com.kalimeradev.mipymee.client.service.FacturasServiceAsync;
@@ -40,6 +41,9 @@ import com.kalimeradev.mipymee.client.service.FacturasServiceAsync;
 public class Boxes extends Composite {
 
 	private final FacturasServiceAsync facturasService = GWT.create(FacturasService.class);
+	private ProfileInfo profileInfo;
+	private TreeItem facturas;
+	private TreeItem recibos;
 
 	/**
 	 * Specifies the images that will be bundled for this Composite and specify that tree's images should also be included in the same bundle.
@@ -59,8 +63,6 @@ public class Boxes extends Composite {
 		ImageResource treeLeaf();
 	}
 
-	public Tree tree;
-
 	/**
 	 * Constructs a new mailboxes widget with a bundle of images.
 	 * 
@@ -68,36 +70,76 @@ public class Boxes extends Composite {
 	 *            a bundle that provides the images for this widget
 	 */
 	public Boxes(final ProfileInfo profileInfo) {
+		this.profileInfo = profileInfo;
 		final Images images = GWT.create(Images.class);
 
+		Tree tree;
 		tree = new Tree(images);
+		TreeItem root = new TreeItem(imageItemHTML(images.home(), profileInfo.getEmail()));
+		facturas = addImageItem(root, "Facturas", images.inbox());
+		recibos = addImageItem(root, "Recibos", images.drafts());
 
+		tree.addItem(root);
+		root.setState(true);
+		tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
+
+			public void onSelection(SelectionEvent<TreeItem> event) {
+				System.out.println("Selected item:" + event.getSelectedItem().toString());
+				AppUtils.EVENT_BUS.fireEvent(new BoxListLeafSelectedEvent(event.getSelectedItem()));
+			}
+		});
+		initWidget(tree);
+		//
+		updateTree(null);
+		//
+		// ////
+		AppUtils.EVENT_BUS.addHandler(BoxesUpdateTreeEvent.TYPE, new BoxesUpdateTreeEvent.BoxesUpdateTreeEventHandler() {
+
+			public void onEvent(BoxesUpdateTreeEvent event) {
+				updateTree(event.getBoxObject());
+			}
+
+		});
+
+		// ///////
+	}
+
+	public void updateTree(final BoxObject selectDefaultObject) {
 		facturasService.retrieveFechas(profileInfo.getEmail(), new AsyncCallback<Map<Long, Long[]>>() {
 
 			public void onSuccess(Map<Long, Long[]> result) {
-				TreeItem root = new TreeItem(imageItemHTML(images.home(), profileInfo.getEmail()));
-				TreeItem facturas = addImageItem(root, "Facturas", images.inbox());
-
+				//
+				//
+				facturas.removeItems();
+				recibos.removeItems();
 				// Years
 				Iterator<Long> iteratorYears = result.keySet().iterator();
 				while (iteratorYears.hasNext()) {
-					TreeItem yearAux=new TreeItem(String.valueOf(iteratorYears.next()));
+					Long year = iteratorYears.next();
+					TreeItem yearAux = new TreeItem(String.valueOf(year));
+
+					yearAux.setUserObject(new BoxObject(year, 0L));
 					facturas.addItem(yearAux);
-					yearAux.addItem("21");
+					// Months
+					Long[] monthsArray = result.get(year);
+					for (Long month : monthsArray) {
+						TreeItem monthAux = new TreeItem(AppUtils.months.get(month));
+						monthAux.setUserObject(new BoxObject(year, month));
+						yearAux.addItem(monthAux);
+						// check if it is the selectDefaultObject item.
+						if (selectDefaultObject!=null) {
+							System.out.println(selectDefaultObject.getYear().longValue() + "==" + year + "&&" + selectDefaultObject.getMonth().longValue() + "==" + month);
+							System.out.println((selectDefaultObject.getYear().longValue() == year) + "&&" + (selectDefaultObject.getMonth().longValue() == month));
+						}
+						if (selectDefaultObject != null && selectDefaultObject.getYear().longValue() == year && selectDefaultObject.getMonth().longValue() == month) {
+							monthAux.getParentItem().getParentItem().setState(true);
+							monthAux.getParentItem().setState(true);
+							monthAux.setState(true,true);
+							monthAux.setSelected(true);
+						}
+					}
 				}
 
-				tree.addItem(root);
-
-				addImageItem(root, "Recibos", images.drafts());
-
-				root.setState(true);
-				tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
-
-					public void onSelection(SelectionEvent<TreeItem> event) {
-						System.out.println("Selected item:" + event.getSelectedItem().toString());
-						AppUtils.EVENT_BUS.fireEvent(new BoxEvent(event.getSelectedItem()));
-					}
-				});
 			}
 
 			public void onFailure(Throwable caught) {
@@ -105,9 +147,6 @@ public class Boxes extends Composite {
 
 			}
 		});
-		//
-
-		initWidget(tree);
 	}
 
 	/**

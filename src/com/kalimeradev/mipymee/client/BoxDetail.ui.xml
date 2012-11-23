@@ -51,6 +51,7 @@
 	        <div class='{style.buttons}'>
 	      		<g:Button text='Guardar' ui:field="saveButton"/>
 	      		<g:Button text='Editar' ui:field="editButton"/>
+	      		<g:Button text='Cancelar' ui:field="cancelButton"/>
 	    	</div>
 	      </g:HTMLPanel>
       </g:ScrollPanel>
@@ -58,7 +59,7 @@
 
     <g:center>
       <g:ScrollPanel>
-        <g:HTML styleName='{style.body}' ui:field='body' wordWrap='true'/>
+        <g:FlexTable styleName='{style.body}' ui:field='flexTable' />
       </g:ScrollPanel>
     </g:center>
   </g:DockLayoutPanel>

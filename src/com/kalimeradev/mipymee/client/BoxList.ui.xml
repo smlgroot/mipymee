@@ -59,6 +59,8 @@
 	    <g:north size='3'>
 	      <g:MenuBar ui:field="menuBar">
 	          <g:MenuItem ui:field="commandNuevo">Nuevo</g:MenuItem>
+	          <g:MenuItem ui:field="commandMover">Mover</g:MenuItem>
+	          <g:MenuItem ui:field="commandBorrar">Borrar</g:MenuItem>
 	      </g:MenuBar>
 	    </g:north>
 	    

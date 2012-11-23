@@ -23,7 +23,6 @@
 
 <script
 	type="text/javascript"
-	language="javascript"
 	src="mipymee/mipymee.nocache.js"
 ></script>
 

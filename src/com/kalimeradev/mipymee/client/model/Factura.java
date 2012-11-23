@@ -24,7 +24,11 @@ public class Factura implements Serializable {
 	@Digits(fraction = 2, integer = 5)
 	private Double total;
 
-	private Date fecha;
+	private Date fechaFactura;
+	private Date fechaNew;
+	private Date fechaMod;
+	private Long year;
+	private Long month;
 
 	public String getRfc() {
 		return rfc;
@@ -50,19 +54,36 @@ public class Factura implements Serializable {
 		this.total = total;
 	}
 
-	public Date getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
 
 	// ////////
 
 
 
 
+
+	public Date getFechaNew() {
+		return fechaNew;
+	}
+
+	public Date getFechaFactura() {
+		return fechaFactura;
+	}
+
+	public void setFechaFactura(Date fechaFactura) {
+		this.fechaFactura = fechaFactura;
+	}
+
+	public void setFechaNew(Date fechaNew) {
+		this.fechaNew = fechaNew;
+	}
+
+	public Date getFechaMod() {
+		return fechaMod;
+	}
+
+	public void setFechaMod(Date fechaMod) {
+		this.fechaMod = fechaMod;
+	}
 
 	public void setIva(String iva) {
 		this.iva = AppUtils.createDouble(iva);
@@ -78,6 +99,22 @@ public class Factura implements Serializable {
 
 	public void setTotal(String total) {
 		this.total = AppUtils.createDouble(total);
+	}
+
+	public Long getYear() {
+		return year;
+	}
+
+	public void setYear(Long year) {
+		this.year = year;
+	}
+
+	public Long getMonth() {
+		return month;
+	}
+
+	public void setMonth(Long month) {
+		this.month = month;
 	}
 
 }

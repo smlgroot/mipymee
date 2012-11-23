@@ -6,10 +6,10 @@
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
   xmlns:pyme='urn:import:com.kalimeradev.mipymee.client'>
 
-  <ui:image field='logo' src='logo.png'/>
+  <ui:image field='logo' src='header-axa.gif'/>
 
   <!-- IE6 cannot handle transparent png, which is what ImageResource creates -->
-  <ui:data field='logoIe6Data' src='logo_ie6.gif' />
+  <ui:data field='logoIe6Data' src='header-axa.gif' />
 
   <ui:style>
 

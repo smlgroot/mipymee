@@ -2,6 +2,8 @@ package com.kalimeradev.mipymee.client;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -11,6 +13,22 @@ public class AppUtils {
 
 	public static EventBus EVENT_BUS = GWT.create(SimpleEventBus.class);
 
+	public static Map<Long,String> months;
+	static {
+		months= new HashMap<Long,String>();
+		months.put(1L, "Enero");
+		months.put(2L, "Febrero");
+		months.put(3L, "Marzo");
+		months.put(4L, "Abril");
+		months.put(5L, "Mayo");
+		months.put(6L, "Junio");
+		months.put(7L, "Julio");
+		months.put(8L, "Agosto");
+		months.put(9L, "Septiembre");
+		months.put(10L, "Octubre");
+		months.put(11L, "Noviembre");
+		months.put(12L, "Diciembre");
+	}
 
 	/**
 	 * <p>

@@ -2,6 +2,16 @@
 
   <!-- Servlets -->
   <servlet>
+    <servlet-name>imagesServlet</servlet-name>
+    <servlet-class>com.kalimeradev.mipymee.server.FacturasServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>imagesServlet</servlet-name>
+    <url-pattern>/mipymee/imagesservlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>facturasServlet</servlet-name>
     <servlet-class>com.kalimeradev.mipymee.server.FacturasServiceImpl</servlet-class>
   </servlet>

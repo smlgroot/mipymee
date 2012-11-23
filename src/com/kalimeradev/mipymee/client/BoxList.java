@@ -17,13 +17,13 @@ package com.kalimeradev.mipymee.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -34,9 +34,11 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.kalimeradev.mipymee.client.events.BoxDetailBtnNewEvent;
 import com.kalimeradev.mipymee.client.events.BoxDetailEvent;
-import com.kalimeradev.mipymee.client.events.BoxEvent;
-import com.kalimeradev.mipymee.client.events.BoxEventHandler;
+import com.kalimeradev.mipymee.client.events.BoxListLeafSelectedEvent;
+import com.kalimeradev.mipymee.client.events.BoxListLeafSelectedEventHandler;
+import com.kalimeradev.mipymee.client.events.BoxListUpdateTableEvent;
 import com.kalimeradev.mipymee.client.events.ProfileEvent;
+import com.kalimeradev.mipymee.client.model.BoxObject;
 import com.kalimeradev.mipymee.client.model.Factura;
 import com.kalimeradev.mipymee.client.service.FacturasService;
 import com.kalimeradev.mipymee.client.service.FacturasServiceAsync;
@@ -72,6 +74,10 @@ public class BoxList extends ResizeComposite {
 	SelectionStyle selectionStyle;
 	@UiField
 	MenuItem commandNuevo;
+	@UiField
+	MenuItem commandBorrar;
+	@UiField
+	MenuItem commandMover;
 
 	private int startIndex, selectedRow = -1;
 	private NavBar navBar;
@@ -86,15 +92,16 @@ public class BoxList extends ResizeComposite {
 		ProfileEvent profileEvent = new ProfileEvent();
 		AppUtils.EVENT_BUS.fireEvent(profileEvent);
 
-		iniHandler(profileEvent.getProfileInfo().getEmail());
-		//
+		iniHandlers(profileEvent.getProfileInfo().getEmail());
+		// Commands
 		commandNuevo.setCommand(new Command() {
 
 			public void execute() {
-				Type<BoxDetailBtnNewEvent> TYPE = new Type<BoxDetailBtnNewEvent>();
 				AppUtils.EVENT_BUS.fireEvent(new BoxDetailBtnNewEvent());
 			}
 		});
+		commandMover.setVisible(false);
+		commandBorrar.setVisible(false);
 		//
 	}
 
@@ -132,7 +139,10 @@ public class BoxList extends ResizeComposite {
 		Cell cell = table.getCellForEvent(event);
 		if (cell != null) {
 			int row = cell.getRowIndex();
-			selectRow(row);
+			int column = cell.getCellIndex();
+			if (column>0) {
+				selectRow(row);
+			}
 		}
 	}
 
@@ -141,25 +151,29 @@ public class BoxList extends ResizeComposite {
 	 */
 	private void initTable() {
 		// Initialize the header.
-		header.getColumnFormatter().setWidth(0, "128px");
-		header.getColumnFormatter().setWidth(1, "192px");
+		header.getColumnFormatter().setWidth(0, "20px");
+		header.getColumnFormatter().setWidth(1, "128px");
 		header.getColumnFormatter().setWidth(2, "192px");
 		header.getColumnFormatter().setWidth(3, "192px");
-		header.getColumnFormatter().setWidth(4, "256px");
+		header.getColumnFormatter().setWidth(4, "192px");
+		header.getColumnFormatter().setWidth(5, "256px");
 
-		header.setText(0, 0, "RFC");
-		header.setText(0, 1, "IVA");
-		header.setText(0, 2, "Total");
-		header.setText(0, 3, "Fecha");
-		header.setWidget(0, 4, navBar);
-		header.getCellFormatter().setHorizontalAlignment(0, 4, HasHorizontalAlignment.ALIGN_RIGHT);
+		CheckBox checkbox = new CheckBox();
+		header.setWidget(0, 0, checkbox);
+		header.setText(0, 1, "RFC");
+		header.setText(0, 2, "IVA");
+		header.setText(0, 3, "Total");
+		header.setText(0, 4, "Fecha");
+		header.setWidget(0, 5, navBar);
+		header.getCellFormatter().setHorizontalAlignment(0, 5, HasHorizontalAlignment.ALIGN_RIGHT);
 
 		// Initialize the table.
-		table.getColumnFormatter().setWidth(0, "128px");
-		table.getColumnFormatter().setWidth(1, "192px");
+		table.getColumnFormatter().setWidth(0, "20px");
+		table.getColumnFormatter().setWidth(1, "128px");
 		table.getColumnFormatter().setWidth(2, "192px");
 		table.getColumnFormatter().setWidth(3, "192px");
-		table.getColumnFormatter().setWidth(4, "256px");
+		table.getColumnFormatter().setWidth(4, "192px");
+		table.getColumnFormatter().setWidth(5, "256px");
 
 	}
 
@@ -227,48 +241,44 @@ public class BoxList extends ResizeComposite {
 
 				// Add a new row to the table, then set each of its columns to the
 				// email's sender and subject values.
-				table.setText(i, 0, item.getRfc());
-				table.setText(i, 1, String.valueOf(item.getIva()));
-				table.setText(i, 2, String.valueOf(item.getTotal()));
-				table.setText(i, 3, String.valueOf(item.getFecha()));
+				CheckBox checkbox = new CheckBox();
+				table.setWidget(i, 0, checkbox);
+				table.setText(i, 1, item.getRfc());
+				table.setText(i, 2, String.valueOf(item.getIva()));
+				table.setText(i, 3, String.valueOf(item.getTotal()));
+				table.setText(i, 4, String.valueOf(item.getFechaFactura()));
 			}
+		} else {
+			// Clear table.
+			for (int i = 0; i < table.getRowCount(); i++) {
+				table.removeRow(i);
+			}
+			table.setText(0, 0, "No se encontraron resultados");
 		}
 	}
 
-	private void iniHandler(final String clienteId) {
+	private void iniHandlers(final String clienteId) {
+		// /////
+
+		AppUtils.EVENT_BUS.addHandler(BoxListUpdateTableEvent.TYPE, new BoxListUpdateTableEvent.BoxListUpdateTableEventHandler() {
+
+			public void onEvent(BoxListUpdateTableEvent event) {
+				retrieveFacturasByUserId(clienteId, event.getBoxObject());
+				update();
+			}
+
+		});
 		// //
-		AppUtils.EVENT_BUS.addHandler(BoxEvent.TYPE, new BoxEventHandler() {
+		AppUtils.EVENT_BUS.addHandler(BoxListLeafSelectedEvent.TYPE, new BoxListLeafSelectedEventHandler() {
 
 			public void onLeafSelected(TreeItem selectedItem) {
-
-				// ///////
-
-				facturasService.retrieveFacturasByUserId(clienteId, new AsyncCallback<Factura[]>() {
-
-					public void onSuccess(Factura[] facturas) {
-						// //Creates items
-						facturaItems = new Factura[facturas.length];
-						for (int i = 0; i < facturas.length; i++) {
-							facturaItems[i] = new Factura();
-							facturaItems[i].setId(facturas[i].getId());
-							facturaItems[i].setRfc(facturas[i].getRfc());
-							facturaItems[i].setIva(facturas[i].getIva());
-							facturaItems[i].setTotal(facturas[i].getTotal());
-							facturaItems[i].setFecha(facturas[i].getFecha());
-						}
-						// //
-						initTable();
-						update();
+				if (selectedItem != null) {
+					Object object = selectedItem.getUserObject();
+					if (object != null) {
+						BoxObject boxObject = (BoxObject) object;
+						retrieveFacturasByUserId(clienteId, boxObject);
 					}
-
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-
-					}
-				});
-
-				// ///////
-
+				}
 			}
 
 		});
@@ -276,4 +286,23 @@ public class BoxList extends ResizeComposite {
 
 	}
 
+	private void retrieveFacturasByUserId(String clienteId, BoxObject boxObject) {
+		// ///////
+
+		facturasService.retrieveFacturasByUserId(clienteId, boxObject, new AsyncCallback<Factura[]>() {
+
+			public void onSuccess(Factura[] facturas) {
+				facturaItems = facturas;
+				initTable();
+				update();
+			}
+
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				caught.printStackTrace();
+			}
+		});
+
+		// ///////
+	}
 }
