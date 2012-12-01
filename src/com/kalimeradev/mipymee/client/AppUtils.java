@@ -6,16 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.SimpleEventBus;
 
 public class AppUtils {
 
-	public static EventBus EVENT_BUS = GWT.create(SimpleEventBus.class);
+	public static MyCustomEvenBus EVENT_BUS = GWT.create(MyCustomEvenBus.class);
 
-	public static Map<Long,String> months;
+	public static Map<Long, String> months;
 	static {
-		months= new HashMap<Long,String>();
+		months = new HashMap<Long, String>();
 		months.put(1L, "Enero");
 		months.put(2L, "Febrero");
 		months.put(3L, "Marzo");

@@ -40,6 +40,8 @@ public class Mipymee implements EntryPoint {
 	@UiField
 	TopPanel topPanel;
 	@UiField
+	LoadingPanel loadingPanel;
+	@UiField
 	BoxList boxList;
 	@UiField
 	BoxDetail boxDetail;

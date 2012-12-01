@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder 
+  SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent"
+>
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:pyme='urn:import:com.kalimeradev.mipymee.client'>
+
+  <ui:image field='loadingbar' src='014.gif'/>
+  <ui:data field='loadingbarData' src='014.gif'/>
+  
+  <ui:style field='selectionStyle'
+    type='com.kalimeradev.mipymee.client.LoadingPanel.SelectionStyle'>
+
+@url loadingbarImg loadingbarData;
+
+  .loadingTrue {
+	background-image:loadingbarImg;
+	background-repeat:repeat-x;
+	background-position:right top;
+	background-color:red;
+    height: 1em;
+  }
+
+  @sprite .loadingFalse{
+  	gwt-image: 'loadingbar';
+	background-color:blue;
+    height: 1em;
+  }
+  </ui:style>
+
+    <g:FlowPanel ui:field='bar'>
+
+    </g:FlowPanel>
+</ui:UiBinder>

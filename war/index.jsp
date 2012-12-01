@@ -31,7 +31,7 @@
 
 <body>
 	<%
-		String urlDevMode = "?gwt.codesvr=127.0.0.1:9997";
+		String urlDevMode = "?gwt.codesvr=127.0.0.1:7777";
 		//String urlDevMode="";
 
 		UserService userService = UserServiceFactory.getUserService();

@@ -37,6 +37,7 @@ import com.kalimeradev.mipymee.client.events.BoxDetailEvent;
 import com.kalimeradev.mipymee.client.events.BoxListLeafSelectedEvent;
 import com.kalimeradev.mipymee.client.events.BoxListLeafSelectedEventHandler;
 import com.kalimeradev.mipymee.client.events.BoxListUpdateTableEvent;
+import com.kalimeradev.mipymee.client.events.LoadingPanelLoadingEvent;
 import com.kalimeradev.mipymee.client.events.ProfileEvent;
 import com.kalimeradev.mipymee.client.model.BoxObject;
 import com.kalimeradev.mipymee.client.model.Factura;
@@ -140,7 +141,7 @@ public class BoxList extends ResizeComposite {
 		if (cell != null) {
 			int row = cell.getRowIndex();
 			int column = cell.getCellIndex();
-			if (column>0) {
+			if (column > 0) {
 				selectRow(row);
 			}
 		}
@@ -264,7 +265,6 @@ public class BoxList extends ResizeComposite {
 
 			public void onEvent(BoxListUpdateTableEvent event) {
 				retrieveFacturasByUserId(clienteId, event.getBoxObject());
-				update();
 			}
 
 		});
@@ -272,6 +272,7 @@ public class BoxList extends ResizeComposite {
 		AppUtils.EVENT_BUS.addHandler(BoxListLeafSelectedEvent.TYPE, new BoxListLeafSelectedEventHandler() {
 
 			public void onLeafSelected(TreeItem selectedItem) {
+	
 				if (selectedItem != null) {
 					Object object = selectedItem.getUserObject();
 					if (object != null) {

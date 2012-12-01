@@ -1,21 +1,8 @@
 package com.kalimeradev.mipymee;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Date;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.kalimeradev.mipymee.client.model.Factura;
-import com.kalimeradev.mipymee.server.FacturasServiceImpl;
 
 public class FacturasTest {
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+	/*private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
 	@Before
 	public void setUp() {
@@ -66,5 +53,5 @@ public class FacturasTest {
 		assertNotNull(map);
 		System.out.println(map.toString());
 		
-	}
+	}*/
 }

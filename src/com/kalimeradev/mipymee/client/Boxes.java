@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.kalimeradev.mipymee.client.events.BoxListLeafSelectedEvent;
 import com.kalimeradev.mipymee.client.events.BoxesUpdateTreeEvent;
+import com.kalimeradev.mipymee.client.events.LoadingPanelLoadingEvent;
 import com.kalimeradev.mipymee.client.model.BoxObject;
 import com.kalimeradev.mipymee.client.model.ProfileInfo;
 import com.kalimeradev.mipymee.client.service.FacturasService;
@@ -127,14 +128,14 @@ public class Boxes extends Composite {
 						monthAux.setUserObject(new BoxObject(year, month));
 						yearAux.addItem(monthAux);
 						// check if it is the selectDefaultObject item.
-						if (selectDefaultObject!=null) {
+						if (selectDefaultObject != null) {
 							System.out.println(selectDefaultObject.getYear().longValue() + "==" + year + "&&" + selectDefaultObject.getMonth().longValue() + "==" + month);
 							System.out.println((selectDefaultObject.getYear().longValue() == year) + "&&" + (selectDefaultObject.getMonth().longValue() == month));
 						}
 						if (selectDefaultObject != null && selectDefaultObject.getYear().longValue() == year && selectDefaultObject.getMonth().longValue() == month) {
 							monthAux.getParentItem().getParentItem().setState(true);
 							monthAux.getParentItem().setState(true);
-							monthAux.setState(true,true);
+							monthAux.setState(true, true);
 							monthAux.setSelected(true);
 						}
 					}

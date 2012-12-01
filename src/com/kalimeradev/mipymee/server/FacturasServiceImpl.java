@@ -34,7 +34,14 @@ public class FacturasServiceImpl extends RemoteServiceServlet implements Factura
 
 	public Factura[] retrieveFacturasByUserId(String clienteId, BoxObject boxObject) {
 		Factura[] result = null;
-
+////////////
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		////////
 		// ////
 		Entity clienteEntity = new Entity("User", clienteId);
 		Key clienteKey = clienteEntity.getKey();

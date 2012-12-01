@@ -7,6 +7,9 @@
     <g:north size='5'>
       <pyme:TopPanel ui:field='topPanel' />
     </g:north>
+    <g:north size='1'>
+      <pyme:LoadingPanel ui:field='loadingPanel' />
+    </g:north>
 
     <g:center>
       <g:SplitLayoutPanel>
